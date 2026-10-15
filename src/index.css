@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* Lab-notebook palette: warm paper, deep ink, one accent (amber, like a highlighter tab) */
-  --color-paper: #f6f3ec;
-  --color-paper-dim: #ece7da;
-  --color-ink: #1e1c16;
-  --color-ink-soft: #514c3f;
-  --color-line: #d9d2bf;
-  --color-accent: #b5762a;
-  --color-accent-soft: #e8dcc4;
+  /* Dark palette: near-black page, slightly lifted surfaces, one red accent */
+  --color-paper: #131212;        /* page background */
+  --color-surface: #1c1a1a;      /* cards, inputs */
+  --color-surface-hover: #232120;
+  --color-ink: #ece8e1;          /* primary text */
+  --color-ink-soft: #9e998f;     /* secondary text, labels */
+  --color-line: #2a2827;         /* borders, dividers */
+  --color-accent: #db474e;       /* red accent */
+  --color-accent-soft: #2e1c1e;  /* tinted background (inline code) */
+  --color-accent-text: #f08b90;  /* readable accent for text on dark tint */
 
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
@@ -16,11 +18,17 @@
 
 html {
   background-color: var(--color-paper);
+  color-scheme: dark;
 }
 
 body {
   color: var(--color-ink);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
 
 /* Rendered markdown content styling */
@@ -36,27 +44,34 @@ body {
 .prose-lab h2 { font-size: 1.375rem; border-top: 1px solid var(--color-line); padding-top: 1.5em; }
 .prose-lab h3 { font-size: 1.125rem; }
 .prose-lab p { line-height: 1.75; margin-bottom: 1.1em; color: var(--color-ink-soft); max-width: 68ch; }
+.prose-lab strong { color: var(--color-ink); font-weight: 600; }
 .prose-lab ul, .prose-lab ol { margin-bottom: 1.1em; padding-left: 1.4em; color: var(--color-ink-soft); }
+.prose-lab ul { list-style: disc; }
+.prose-lab ol { list-style: decimal; }
 .prose-lab li { margin-bottom: 0.35em; line-height: 1.65; }
+.prose-lab li::marker { color: var(--color-accent); }
 .prose-lab a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.prose-lab a:hover { color: var(--color-accent-text); }
 .prose-lab code {
   font-family: var(--font-mono);
   background: var(--color-accent-soft);
+  color: var(--color-accent-text);
   padding: 0.15em 0.4em;
   border-radius: 3px;
   font-size: 0.875em;
 }
 .prose-lab pre {
-  background: var(--color-ink);
-  color: #ece7da;
+  background: #0d0c0c;
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
   padding: 1.1em 1.25em;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow-x: auto;
   margin-bottom: 1.4em;
   font-size: 0.85rem;
   line-height: 1.6;
 }
-.prose-lab pre code { background: none; padding: 0; color: inherit; }
+.prose-lab pre code { background: none; color: inherit; padding: 0; }
 .prose-lab blockquote {
   border-left: 3px solid var(--color-accent);
   padding-left: 1em;
@@ -65,7 +80,7 @@ body {
   margin-bottom: 1.1em;
 }
 .prose-lab table { width: 100%; border-collapse: collapse; margin-bottom: 1.4em; font-size: 0.9rem; }
-.prose-lab th, .prose-lab td { border: 1px solid var(--color-line); padding: 0.5em 0.75em; text-align: left; }
-.prose-lab th { background: var(--color-paper-dim); font-family: var(--font-mono); font-weight: 500; }
-.prose-lab img { max-width: 100%; border-radius: 4px; margin-bottom: 1.1em; border: 1px solid var(--color-line); }
+.prose-lab th, .prose-lab td { border: 1px solid var(--color-line); padding: 0.5em 0.75em; text-align: left; color: var(--color-ink-soft); }
+.prose-lab th { background: var(--color-surface); color: var(--color-ink); font-family: var(--font-mono); font-weight: 500; }
+.prose-lab img { max-width: 100%; border-radius: 6px; margin-bottom: 1.1em; border: 1px solid var(--color-line); }
 .prose-lab hr { border: none; border-top: 1px solid var(--color-line); margin: 2em 0; }
