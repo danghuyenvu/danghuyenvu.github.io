@@ -1,13 +1,16 @@
 ---
 title: TwoMillion
 date: 2026-03-24
-category: [HackTheBox, Linux, Web Exploitation]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Easy
+platform: HackTheBox
+os: Linux
 summary: TwoMillion is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/TwoMillion
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/547
 ---
 
-[Link to machine.](https://app.hackthebox.com/machines/TwoMillion)
 ## Reconnaissance
 Start with a nmap scan:
 ```bash

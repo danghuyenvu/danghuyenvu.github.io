@@ -11,6 +11,16 @@ import { load as loadYaml } from 'js-yaml';
 // difficulty: Hard
 // pinned: true            # optional: shows in the "Pinned" section on the homepage
 // summary: One-line description shown on the list page.
+//
+// Optional header fields (each one only shows up if you set it):
+// platform: HackTheBox
+// os: Linux
+// creator: 7u9y
+// machine: Devvortex
+// machine_url: https://app.hackthebox.com/machines/Devvortex
+// achievement: https://labs.hackthebox.com/achievement/machine/1737280/856   # shows the HTB "pwned" card
+// tldr: |
+//   Markdown allowed: `code`, **bold**, even a numbered exploit chain.
 // ---
 
 export interface WriteupMeta {
@@ -22,6 +32,14 @@ export interface WriteupMeta {
   difficulty?: string;
   summary?: string;
   pinned: boolean;
+  platform?: string;
+  os?: string;
+  creator?: string;
+  machine?: string;
+  machineUrl?: string;
+  achievement?: string;
+  tldr?: string;
+  readMinutes: number;
 }
 
 export interface Writeup extends WriteupMeta {
@@ -64,6 +82,12 @@ function normalizeDate(value: unknown): string {
   return '';
 }
 
+function optString(value: unknown): string | undefined {
+  if (value === null || value === undefined) return undefined;
+  const str = String(value).trim();
+  return str ? str : undefined;
+}
+
 function toStringArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String);
   if (value) return [String(value)];
@@ -77,7 +101,12 @@ const writeups: Writeup[] = Object.entries(modules).map(([path, raw]) => {
   const tags = toStringArray(data.tags);
   const title = (data.title as string) ?? slug;
   const summary = data.summary as string | undefined;
-  const difficulty = data.difficulty as string | undefined;
+  const difficulty = optString(data.difficulty);
+  const platform = optString(data.platform);
+  const os = optString(data.os);
+  const creator = optString(data.creator);
+  const machine = optString(data.machine);
+  const tldr = optString(data.tldr);
 
   return {
     slug,
@@ -88,8 +117,16 @@ const writeups: Writeup[] = Object.entries(modules).map(([path, raw]) => {
     difficulty,
     summary,
     pinned: data.pinned === true || data.pinned === 'true',
+    platform,
+    os,
+    creator,
+    machine,
+    machineUrl: optString(data.machine_url),
+    achievement: optString(data.achievement),
+    tldr,
+    readMinutes: Math.max(1, Math.round(content.split(/\s+/).filter(Boolean).length / 200)),
     content,
-    searchIndex: [title, summary, difficulty, ...categories, ...tags, content]
+    searchIndex: [title, summary, difficulty, platform, os, creator, machine, tldr, ...categories, ...tags, content]
       .filter(Boolean)
       .join('\n')
       .toLowerCase(),

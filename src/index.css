@@ -7,6 +7,7 @@
   --color-surface-hover: #232120;
   --color-ink: #ece8e1;          /* primary text */
   --color-ink-soft: #9e998f;     /* secondary text, labels */
+  --color-prose: #ece8e1;        /* writeup body text -- set to #ffffff for pure white */
   --color-line: #2a2827;         /* borders, dividers */
   --color-accent: #db474e;       /* red accent */
   --color-accent-soft: #2e1c1e;  /* tinted background (inline code) */
@@ -43,9 +44,9 @@ body {
 .prose-lab h1 { font-size: 1.75rem; }
 .prose-lab h2 { font-size: 1.375rem; border-top: 1px solid var(--color-line); padding-top: 1.5em; }
 .prose-lab h3 { font-size: 1.125rem; }
-.prose-lab p { line-height: 1.75; margin-bottom: 1.1em; color: var(--color-ink-soft); max-width: 68ch; }
+.prose-lab p { line-height: 1.75; margin-bottom: 1.1em; color: var(--color-prose); max-width: 68ch; }
 .prose-lab strong { color: var(--color-ink); font-weight: 600; }
-.prose-lab ul, .prose-lab ol { margin-bottom: 1.1em; padding-left: 1.4em; color: var(--color-ink-soft); }
+.prose-lab ul, .prose-lab ol { margin-bottom: 1.1em; padding-left: 1.4em; color: var(--color-prose); }
 .prose-lab ul { list-style: disc; }
 .prose-lab ol { list-style: decimal; }
 .prose-lab li { margin-bottom: 0.35em; line-height: 1.65; }
@@ -75,12 +76,12 @@ body {
 .prose-lab blockquote {
   border-left: 3px solid var(--color-accent);
   padding-left: 1em;
-  color: var(--color-ink-soft);
+  color: var(--color-prose);
   font-style: italic;
   margin-bottom: 1.1em;
 }
 .prose-lab table { width: 100%; border-collapse: collapse; margin-bottom: 1.4em; font-size: 0.9rem; }
-.prose-lab th, .prose-lab td { border: 1px solid var(--color-line); padding: 0.5em 0.75em; text-align: left; color: var(--color-ink-soft); }
+.prose-lab th, .prose-lab td { border: 1px solid var(--color-line); padding: 0.5em 0.75em; text-align: left; color: var(--color-prose); }
 .prose-lab th { background: var(--color-surface); color: var(--color-ink); font-family: var(--font-mono); font-weight: 500; }
 .prose-lab img { max-width: 100%; border-radius: 6px; margin-bottom: 1.1em; border: 1px solid var(--color-line); }
 .prose-lab hr { border: none; border-top: 1px solid var(--color-line); margin: 2em 0; }

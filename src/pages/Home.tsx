@@ -102,7 +102,7 @@ export default function Home() {
       <div className="mb-10">
         <h1 className="mb-2 text-2xl font-semibold">Lab Writeups</h1>
         <p className="max-w-[60ch] text-ink-soft">
-          Notes and reports from labs and exercises — methodology, findings, and what I learned
+          Notes and reports (or maybe drafts) from labs and exercises — methodology, findings, and what I learned
           working through each one.
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function Home() {
       {/* Pinned writeups: hidden while searching/filtering so results stay focused */}
       {pinned.length > 0 && !isFiltering && (
         <section className="mb-12">
-          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-accent">Pinned</h2>
+          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-accent">Featured</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {pinned.map((w) => (
               <PinnedCard key={w.slug} w={w} />

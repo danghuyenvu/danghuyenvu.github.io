@@ -1,13 +1,15 @@
 ---
 title: CCTV
 date: 2026-04-08
-category: [HackTheBox, Linux, Web Exploitation, Password Attack]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf, gobuster, sqlmap, hashcat]
 difficulty: Easy
+platform: HackTheBox
+os: Linux
 summary: CCTV is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/CCTV
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/847
 ---
-
-[Link to machine](https://app.hackthebox.com/machines/CCTV)
 
 ## Reconnaissance
 #### Nmap scan:

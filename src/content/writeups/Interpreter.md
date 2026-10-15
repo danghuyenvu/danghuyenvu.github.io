@@ -1,13 +1,15 @@
 ---
 title: Interpreter
 date: 2026-04-24
-category: [HackTheBox, Linux, Web Exploitation, Password Attack]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf, hashcat]
 difficulty: Medium
+platform: HackTheBox
+os: Linux
 summary: Interpreter is a medium rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Interpreter
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/841
 ---
-
-[Link to machine.](https://app.hackthebox.com/machines/Interpreter)
 
 ## Reconnaissance
 Start with an Nmap scan:

@@ -1,13 +1,15 @@
 ---
 title: Principal
 date: 2026-04-21
-category: [HackTheBox, Linux, Web Exploitation, Cryptography]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Medium
+platform: HackTheBox
+os: Linux
 summary: Principal is a medium rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Principal
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/853
 ---
-
-[Link to machine.](https://app.hackthebox.com/machines/Principal)
 
 ## Reconnaissance
 Start with an Nmap scan:

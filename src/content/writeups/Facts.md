@@ -1,13 +1,15 @@
 ---
 title: Facts
 date: 2026-03-21
-category: [HackTheBox, Linux, Web Exploitation, Password Attack, OSINT]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf, johntheripper]
 difficulty: Easy
+platform: HackTheBox
+os: Linux
 summary: Facts is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Facts
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/829
 ---
-
-[Link to machine.](https://app.hackthebox.com/machines/Facts)
 
 ## Enumeration
 Nmap SYN scan:

@@ -1,13 +1,16 @@
 ---
 title: VariaType
 date: 2026-05-01
-category: [HackTheBox, Linux, Web Exploitation]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Medium
+platform: HackTheBox
+os: Linux
 summary: VariaType is an medium rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/VariaType
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/850
 ---
 
-[Link to machine.](https://app.hackthebox.com/machines/VariaType)
 # Reconnaissance
 Nmap scan:
 ```bash
@@ -65,7 +68,7 @@ ffuf -u http://portal.variatype.htb/FUZZ -w /usr/share/wordlists/dirbuster/direc
 VariaType is a service to help build variable fonts.
 Noticed it's using `fonttools`, `fontmake`, `gftools`:
 ![](/images/Pasted%20image%2020260430224718.png)
-A brief research for known vulnerables shows CVE-2025-66034 (haven't confirmed yet).
+A brief research for known vulnerables shows CVE-2025-66034.
 ## [CVE-2025-66034](https://github.com/advisories/GHSA-768j-98cg-p3fv)
 ## Exploitation
 `.designspace` payload that I uploaded to the service.

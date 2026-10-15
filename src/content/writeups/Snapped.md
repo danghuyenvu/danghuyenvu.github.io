@@ -1,13 +1,20 @@
 ---
 title: Snapped
 date: 2026-04-27
-category: [HackTheBox, Linux, Web Exploitation]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Hard
+platform: HackTheBox
+os: Linux
 summary: Snapped is a hard rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Snapped
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/864
+pinned: true
+tldr: |
+    - **Initial Access:** Exploited an unauthenticated API endpoint vulnerability (CVE-2026-27944) in Nginx UI to download a full system backup containing encrypted sensitive data, using keys leaked in the response headers.
+    - **Execution & Foothold:** Decrypted the database backup using AES-256-CBC, extracted bcrypt password hashes, cracked the hash using hashcat to recover user jonathan's credentials, and established a foothold via SSH.
+    - **Privilege Escalation:** Leveraged a local privilege escalation flaw in snap-confine and systemd-tmpfiles (CVE-2026-3888) by winning a race condition in the sandbox mimic namespace, allowing the overwriting of the dynamic linker to execute a root shell and bypass AppArmor confinement.
 ---
-
-[Link to machine.](https://app.hackthebox.com/machines/Snapped)
 
 ## Reconnaissance
 Nmap scan:

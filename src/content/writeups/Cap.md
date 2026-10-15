@@ -2,9 +2,13 @@
 title: Cap
 date: 2026-03-10
 category: [HackTheBox, Linux]
+platform: HackTheBox
+os: Linux
 tags: [nmap, linPEAS, Wireshark]
 difficulty: Easy
 summary: Cap is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Cap
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/351
 ---
 
 ## Reconnaissance

@@ -1,13 +1,16 @@
 ---
 title: WingData
 date: 2026-04-19
-category: [HackTheBox, Linux, Web Exploitation]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf, metasploit]
 difficulty: Easy
+platform: HackTheBox
+os: Linux
 summary: WingData is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/WingData
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/835
 ---
 
-[Link to machine.](https://app.hackthebox.com/machines/WingData)
 ## Reconnaissance
 ### Nmap scan
 Start with a nmap scans on popular ports (to fast find the target and then we gonna do nmap for every other ports in the background).

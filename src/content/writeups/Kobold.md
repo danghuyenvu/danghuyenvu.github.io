@@ -1,13 +1,16 @@
 ---
 title: Kobold
 date: 2026-04-07
-category: [HackTheBox, Linux, Web Exploitation]
+category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Easy
+platform: HackTheBox
+os: Linux
 summary: Kobold is an easy rated box on Hack The Box
+machine_url: https://app.hackthebox.com/machines/Kobold
+achievement: https://labs.hackthebox.com/achievement/machine/1737280/856
 ---
 
-[Link to machine.](https://app.hackthebox.com/machines/Kobold)
 ## Reconnaissance
 Starting out with a nmap SYN scan:
 ```bash
