@@ -53,7 +53,7 @@ body {
 .prose-lab li::marker { color: var(--color-accent); }
 .prose-lab a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
 .prose-lab a:hover { color: var(--color-accent-text); }
-.prose-lab code {
+.prose-lab :not(pre) > code {
   font-family: var(--font-mono);
   background: var(--color-accent-soft);
   color: var(--color-accent-text);
@@ -61,18 +61,6 @@ body {
   border-radius: 3px;
   font-size: 0.875em;
 }
-.prose-lab pre {
-  background: #0d0c0c;
-  border: 1px solid var(--color-line);
-  color: var(--color-ink);
-  padding: 1.1em 1.25em;
-  border-radius: 8px;
-  overflow-x: auto;
-  margin-bottom: 1.4em;
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-.prose-lab pre code { background: none; color: inherit; padding: 0; }
 .prose-lab blockquote {
   border-left: 3px solid var(--color-accent);
   padding-left: 1em;

@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
 import { getWriteupBySlug } from '../lib/writeups';
+import CodeBlock from '../components/CodeBlock';
 
 // Resolve a markdown image path against the site's base URL.
 function resolveImageSrc(src?: string): string {
@@ -182,8 +183,8 @@ export default function WriteupPage() {
   // Put the label inline ("TL;DR — ...") unless the text contains a list, or starts with a heading/quote/code.
   const tldrMarkdown = w.tldr
     ? /^\s*(#|>|```)|^\s*([-*+]|\d+[.)])\s/m.test(w.tldr)
-      ? `**Summary**\n\n${w.tldr}`
-      : `**Summary** — ${w.tldr}`
+      ? `**TL;DR**\n\n${w.tldr}`
+      : `**TL;DR** — ${w.tldr}`
     : undefined;
 
   return (
@@ -214,7 +215,8 @@ export default function WriteupPage() {
         </h1>
 
         <p className="mt-5 font-mono text-sm text-ink-soft">
-          {w.date && <>{formatDate(w.date)} </>}
+          {w.date && <>{formatDate(w.date)} <span className="mx-1">•</span> </>}
+          {w.readMinutes} min read
         </p>
       </header>
 
@@ -252,8 +254,9 @@ export default function WriteupPage() {
       <div className="prose-lab">
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkBreaks]}
-          rehypePlugins={[rehypeHighlight]}
+          rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }]]}
           components={{
+            pre: CodeBlock,
             img: ({ src, alt }) => (
               // eslint-disable-next-line jsx-a11y/alt-text
               <img src={resolveImageSrc(src as string)} alt={alt ?? ''} loading="lazy" />

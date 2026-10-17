@@ -9,6 +9,12 @@ os: Linux
 summary: Silentium is an easy rated machine on Hack The Box
 machine_url: https://app.hackthebox.com/machines/Silentium
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/867
+pinned: true
+tldr: |
+    - **Initial Access:** Fuzzing revealed a staging subdomain running Flowise with verbose error handling that leaked valid user emails, leading to account compromise via a password reset token flaw (CVE-2025-58434).
+    - **Execution & Foothold:** Leveraged a custom MCP server loading vulnerability (CVE-2025-59528) within Flowise to achieve Remote Code Execution and obtain a reverse shell from inside the Docker container.
+    - **Lateral Movement:** Extracted plain-text credentials from environment variables inside the container and reused the password via SSH to compromise the `ben` user account.
+    - **Privilege Escalation:** Configured an SSH tunnel to access an internal loopback-bound Gogs service and exploited an authenticated path traversal and symbolic link vulnerability (CVE-2025-8110) to overwrite git configurations and achieve full `root` compromise.
 ---
 
 ## Reconnaissance
@@ -125,7 +131,7 @@ Checking for SUID binaries
 Checking Kernel version:
 ![](/images/silentium/Pasted-image-20260413095301.png)
 ![](/images/silentium/Pasted-image-20260413164734.png)
-Checking local network service, I noticed there are some local-bounded listeners. But the current user's privilege is too low that I cannot see what the services are.
+Checking local network service, I noticed there are some loopback-bounded listeners. But the current user's privilege is too low that I cannot see what the services are.
 So set up a ssh tunnel for port forwarding for each service:
 ```
 ssh -L 44444:IP:3001 ben@IP
@@ -183,17 +189,6 @@ The command file stores the content you want to write into the `.git/config` fil
 Open a netcat listener on the desired port (4444) and request. We got the shell. And in this case it's a root shell.
 ![](/images/silentium/Pasted-image-20260413180932.png)
 ![](/images/silentium/Pasted-image-20260413181023.png)
-## Summary
-Exploit chain including: 
-- Nmap scan reveals service on port 80. 
-- Vhost fuzzing reveals an instance of Flowise on `staging.silentium.htb`. 
-- Verbose error message exposing valid credentials.
-- Exploitation of CVE-2025-58434 leading to account compromise.
-- Exploitation of CVE-2025-59528 with authenticated account leads to reverse shell connection from inside the Docker container.
-- Credentials enumeration and exploit of password reuse.
-- Privilege escalation technique including process/network enumeration, suspect an inbound listener on port 3001.
-- Port forwarding to have access to the service.
-- Exploitation of CVE-2025-8110, leading to machine compromise & privilege escalation.
 ## Remediation
 #### Usage of vulnerable instance of Flowise, and too verbose error message:
 - Observation: Difference between the error message of an invalid user email and a valid user email (ben@silentium.htb), allowing the attacker to easily identify the account. The vulnerability in `forgot-password` API turning it into a severe account compromise, and another API vulnerability leads to RCE.
