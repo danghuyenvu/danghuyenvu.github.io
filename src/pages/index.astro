@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import HomeInteractive from "../components/HomeInteractive";
+
+const entries = await getCollection("writeups");
+
+const writeups = entries.map((entry) => {
+  const data = entry.data;
+  const categories = data.category
+    ? Array.isArray(data.category)
+      ? data.category
+      : [data.category]
+    : [];
+
+  const tags = data.tags
+    ? Array.isArray(data.tags)
+      ? data.tags
+      : [data.tags]
+    : [];
+
+  const date = data.date
+    ? new Date(data.date).toISOString().slice(0, 10)
+    : "";
+
+  const searchIndex = [
+    data.title,
+    data.summary,
+    data.difficulty,
+    data.platform,
+    data.os,
+    data.creator,
+    data.machine,
+    data.tldr,
+    ...categories,
+    ...tags,
+    entry.body,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return {
+    slug: entry.id,
+    title: data.title,
+    date,
+    categories,
+    tags,
+    difficulty: data.difficulty,
+    pinned: data.pinned ?? false,
+    summary: data.summary,
+    searchIndex,
+  };
+});
+---
+
+<Layout title="Lab Writeups">
+  <HomeInteractive
+    writeups={writeups}
+    baseUrl={import.meta.env.BASE_URL}
+    client:load
+  />
+</Layout>

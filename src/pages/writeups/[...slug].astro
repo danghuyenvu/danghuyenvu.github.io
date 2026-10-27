@@ -1,0 +1,222 @@
+
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import MarkdownBody from "../../components/MarkdownBody";
+import TldrBody from "../../components/TldrBody";
+import AchievementCard from "../../components/AchievementCard";
+
+export async function getStaticPaths() {
+  const writeups = await getCollection("writeups");
+
+  return writeups.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const w = entry.data;
+
+const categories = w.category
+  ? Array.isArray(w.category) ? w.category : [w.category]
+  : [];
+
+const tags = w.tags
+  ? Array.isArray(w.tags) ? w.tags : [w.tags]
+  : [];
+
+const date = w.date
+  ? new Date(w.date).toISOString().slice(0, 10)
+  : "";
+
+const formatDate = (value: string) => {
+  const d = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+};
+
+const difficultyColor: Record<string, string> = {
+  easy: "text-[#86c98f]",
+  medium: "text-[#e3b25a]",
+  hard: "text-[#e8855b]",
+  insane: "text-[#b690ea]",
+};
+
+const diffColor =
+  difficultyColor[w.difficulty?.toLowerCase() ?? ""] ?? "text-ink";
+
+const platformAbbr: Record<string, string> = {
+  hackthebox: "HTB",
+  "hack the box": "HTB",
+  tryhackme: "THM",
+  "try hack me": "THM",
+};
+
+const platformBadge = w.platform
+  ? platformAbbr[w.platform.toLowerCase()] ?? w.platform
+  : undefined;
+
+const readMinutes = Math.max(
+  1,
+  Math.round(entry.body.split(/\s+/).filter(Boolean).length / 200),
+);
+
+const hasCategories = !(
+  categories.length === 1 && categories[0] === "Uncategorized"
+);
+
+const tldrMarkdown = w.tldr
+  ? /^\s*(#|>|```)|^\s*([-*+]|\d+[.)])\s/m.test(w.tldr)
+    ? `**TL;DR**\n\n${w.tldr}`
+    : `**TL;DR** — ${w.tldr}`
+  : undefined;
+
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${w.title} | lab-writeups`}>
+  <article>
+    <nav
+      aria-label="Breadcrumb"
+      class="font-mono text-sm text-ink-soft"
+    >
+      <a
+        href={baseUrl}
+        class="text-ink transition-colors hover:text-accent"
+      >
+        writeups
+      </a>
+      <span class="mx-2">/</span>
+      <span>{entry.id}</span>
+    </nav>
+
+    <header class="mt-8">
+      {(platformBadge || w.difficulty || w.os) && (
+        <div class="mb-5 flex flex-wrap gap-2">
+          {platformBadge && (
+            <span class="rounded-md border border-accent bg-accent-soft px-3 py-1 font-mono text-sm text-accent">
+              {platformBadge}
+            </span>
+          )}
+          {w.difficulty && (
+            <span class={`rounded-md border border-line bg-surface px-3 py-1 font-mono text-sm ${diffColor}`}>
+              {w.difficulty}
+            </span>
+          )}
+          {w.os && (
+            <span class="rounded-md border border-line bg-surface px-3 py-1 font-mono text-sm text-ink">
+              {w.os}
+            </span>
+          )}
+        </div>
+      )}
+
+      <h1 class="text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+        {w.title}
+      </h1>
+
+      <p class="mt-5 font-mono text-sm text-ink-soft">
+        {date && <>{formatDate(date)} <span class="mx-1">•</span> </>}
+        {readMinutes} min read
+      </p>
+    </header>
+
+    <div class="my-8 border-t border-line"></div>
+
+    {(w.platform || w.machine || w.machine_url || w.difficulty ||
+      w.os || w.creator || date || hasCategories || tags.length > 0) && (
+      <dl class="mb-8 overflow-hidden rounded-xl border border-line bg-surface">
+        {w.platform && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Platform</dt>
+            <dd class="min-w-0 break-words text-ink">{w.platform}</dd>
+          </div>
+        )}
+
+        {(w.machine_url || w.machine) && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Machine</dt>
+            <dd class="min-w-0 break-words text-ink">
+              {w.machine_url ? (
+                <a
+                  href={w.machine_url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  class="text-accent underline-offset-2 hover:text-accent-text hover:underline"
+                >
+                  {w.machine ?? "View machine"} ↗
+                </a>
+              ) : w.machine}
+            </dd>
+          </div>
+        )}
+
+        {w.difficulty && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Difficulty</dt>
+            <dd class={`min-w-0 break-words ${diffColor}`}>{w.difficulty}</dd>
+          </div>
+        )}
+
+        {w.os && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">OS</dt>
+            <dd class="min-w-0 break-words text-ink">{w.os}</dd>
+          </div>
+        )}
+
+        {w.creator && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Creator</dt>
+            <dd class="min-w-0 break-words text-ink">{w.creator}</dd>
+          </div>
+        )}
+
+        {date && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Date</dt>
+            <dd class="min-w-0 break-words text-ink">{formatDate(date)}</dd>
+          </div>
+        )}
+
+        {hasCategories && (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+            <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Category</dt>
+            <dd class="min-w-0 break-words text-ink">{categories.join(" · ")}</dd>
+          </div>
+        )}
+
+        {tags.length > 0 && (
+            <div class="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_minmax(0,1fr)]">
+                <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+                Tags
+                </dt>
+                <dd class="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-1 font-mono text-sm text-ink-soft">
+                {tags.map((tag) => (
+                    <span>#{tag}</span>
+                ))}
+                </dd>
+            </div>
+        )}
+      </dl>
+    )}
+
+    {tldrMarkdown && <TldrBody content={tldrMarkdown} />}
+
+    {w.achievement && (
+      <AchievementCard
+        value={w.achievement}
+        name={w.machine ?? w.title}
+        client:load
+      />
+    )}
+
+    <MarkdownBody content={entry.body} baseUrl={baseUrl} client:load />
+  </article>
+</Layout>
