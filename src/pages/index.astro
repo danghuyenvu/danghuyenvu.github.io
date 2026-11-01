@@ -1,3 +1,4 @@
+
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
@@ -7,6 +8,7 @@ const entries = await getCollection("writeups");
 
 const writeups = entries.map((entry) => {
   const data = entry.data;
+
   const categories = data.category
     ? Array.isArray(data.category)
       ? data.category
@@ -23,23 +25,6 @@ const writeups = entries.map((entry) => {
     ? new Date(data.date).toISOString().slice(0, 10)
     : "";
 
-  const searchIndex = [
-    data.title,
-    data.summary,
-    data.difficulty,
-    data.platform,
-    data.os,
-    data.creator,
-    data.machine,
-    data.tldr,
-    ...categories,
-    ...tags,
-    entry.body,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
   return {
     slug: entry.id,
     title: data.title,
@@ -49,7 +34,6 @@ const writeups = entries.map((entry) => {
     difficulty: data.difficulty,
     pinned: data.pinned ?? false,
     summary: data.summary,
-    searchIndex,
   };
 });
 ---

@@ -1,5 +1,6 @@
 ---
 title: Kobold
+machine: Kobold
 date: 2026-04-07
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
@@ -20,7 +21,7 @@ sudo nmap -sVCS -vv -p- --min-rate 5000 -oN nmap-scan <IP>
 Found three services running aside from SSH. Port 80 running a nginx http server while port 443 runs a ssl/http nginx, just the same as one running on port 80 but with SSL. Port 3552 running a Golang server.
 The two service running on port 80 and 443 resolves to a domain name of `kobold.htb`. Add IP and name pair to `/etc/hosts` and we are free to go. So try fuzzing for vhosts on both `http`:
 ```bash
-ffuf -w ../../SecLists/Discovery/DNS/subdomains-top1million-20000.txt -H "Host: FUZZ.kobold.htb" -u http://10.129.17.229:80 -c 200,301,302 > http-vhost
+ffuf -w ../../SecLists/Discovery/DNS/subdomains-top1million-20000.txt -H "Host: FUZZ.kobold.htb" -u http://10.129.17.229:80 -mc 200,301,302 > http-vhost
 ```
 and `https`:
 ```bash

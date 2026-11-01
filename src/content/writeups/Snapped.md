@@ -1,5 +1,6 @@
 ---
 title: Snapped
+machine: Snapped
 date: 2026-04-27
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
@@ -81,7 +82,7 @@ find / -perm -u=s -type f -exec ls -la {} \; 2>/dev/null
 ![](/images/Pasted%20image%2020260427145413.png)
 I see a `snap-confine` having SUID bit set, and since the machine named Snapped, it suggests I should take a look about it.
 So I go searching online for any snap related vulnerability, and found a LPE exploits using `snap-confine`.
-## [CVE-2026-3888]([https://blog.qualys.com/vulnerabilities-threat-research/2026/03/17/cve-2026-3888-important-snap-flaw-enables-local-privilege-escalation-to-root](https://cdn2.qualys.com/advisory/2026/03/17/snap-confine-systemd-tmpfiles.txt))
+## [CVE-2026-3888](https://blog.qualys.com/vulnerabilities-threat-research/2026/03/17/cve-2026-3888-important-snap-flaw-enables-local-privilege-escalation-to-root)
 CVE-2026-3888 is a vulnerability affecting the default installation of Ubuntu Desktop >= 24.04. It was discovered and disclosed by Qualys.
 The exploitation process involves two normal components of a typical Ubuntu machine: `snap-confine` and `systemd-tmpfiles`.
 - `snap-confine`: is a SUID-root binary that handles the initialization of a sandbox environment for a snap app to run including bind-mounting file systems, or manage Apparmor profiles.

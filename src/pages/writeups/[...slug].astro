@@ -67,9 +67,7 @@ const readMinutes = Math.max(
   Math.round(entry.body.split(/\s+/).filter(Boolean).length / 200),
 );
 
-const hasCategories = !(
-  categories.length === 1 && categories[0] === "Uncategorized"
-);
+const hasCategories = categories.length > 0;
 
 const tldrMarkdown = w.tldr
   ? /^\s*(#|>|```)|^\s*([-*+]|\d+[.)])\s/m.test(w.tldr)
@@ -132,14 +130,14 @@ const baseUrl = import.meta.env.BASE_URL;
       w.os || w.creator || date || hasCategories || tags.length > 0) && (
       <dl class="mb-8 overflow-hidden rounded-xl border border-line bg-surface">
         {w.platform && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Platform</dt>
             <dd class="min-w-0 break-words text-ink">{w.platform}</dd>
           </div>
         )}
 
         {(w.machine_url || w.machine) && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Machine</dt>
             <dd class="min-w-0 break-words text-ink">
               {w.machine_url ? (
@@ -157,35 +155,35 @@ const baseUrl = import.meta.env.BASE_URL;
         )}
 
         {w.difficulty && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Difficulty</dt>
             <dd class={`min-w-0 break-words ${diffColor}`}>{w.difficulty}</dd>
           </div>
         )}
 
         {w.os && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">OS</dt>
             <dd class="min-w-0 break-words text-ink">{w.os}</dd>
           </div>
         )}
 
         {w.creator && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Creator</dt>
             <dd class="min-w-0 break-words text-ink">{w.creator}</dd>
           </div>
         )}
 
         {date && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Date</dt>
             <dd class="min-w-0 break-words text-ink">{formatDate(date)}</dd>
           </div>
         )}
 
         {hasCategories && (
-          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 sm:grid-cols-[9rem_1fr]">
+          <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-line px-5 py-3.5 last:border-b-0 sm:grid-cols-[9rem_1fr]">
             <dt class="pt-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Category</dt>
             <dd class="min-w-0 break-words text-ink">{categories.join(" · ")}</dd>
           </div>

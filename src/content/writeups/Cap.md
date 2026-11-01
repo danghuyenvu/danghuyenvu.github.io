@@ -1,5 +1,6 @@
 ---
 title: Cap
+machine: Cap
 date: 2026-03-10
 category: [HackTheBox, Linux]
 platform: HackTheBox

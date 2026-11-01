@@ -9,8 +9,55 @@ type WriteupItem = {
   difficulty?: string;
   pinned: boolean;
   summary?: string;
-  searchIndex: string;
 };
+
+
+type SearchIndexEntry = {
+  slug: string;
+  searchText: string;
+};
+
+// Shared between component instances and reused across searches.
+let searchIndexPromise: Promise<Record<string, string>> | null = null;
+
+function loadSearchIndex(
+  baseUrl: string,
+): Promise<Record<string, string>> {
+  if (!searchIndexPromise) {
+    const normalizedBase = baseUrl.endsWith("/")
+      ? baseUrl
+      : `${baseUrl}/`;
+
+    searchIndexPromise = fetch(
+      `${normalizedBase}search-index.json`,
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to load search index: ${response.status}`,
+          );
+        }
+
+        return response.json() as Promise<SearchIndexEntry[]>;
+      })
+      .then((entries) =>
+        Object.fromEntries(
+          entries.map(({ slug, searchText }) => [
+            slug,
+            searchText,
+          ]),
+        ),
+      )
+      .catch((error) => {
+        // Allow a later attempt if the request fails.
+        searchIndexPromise = null;
+        throw error;
+      });
+  }
+
+  return searchIndexPromise;
+}
+
 
 type Props = {
   writeups: WriteupItem[];
@@ -108,6 +155,46 @@ export default function HomeInteractive({ writeups, baseUrl }: Props) {
   const [difficulty, setDifficulty] = useState("all");
   const [sort, setSort] = useState<SortMode>("latest");
   const searchRef = useRef<HTMLInputElement>(null);
+  const [searchIndex, setSearchIndex] =
+    useState<Record<string, string> | null>(null);
+
+  const [searchIndexError, setSearchIndexError] =
+    useState(false);
+
+  const [searchIndexLoading, setSearchIndexLoading] =
+    useState(false);
+
+  useEffect(() => {
+    if (!query.trim() || searchIndex !== null) return;
+
+    let cancelled = false;
+
+    setSearchIndexLoading(true);
+    setSearchIndexError(false);
+
+    loadSearchIndex(baseUrl)
+      .then((index) => {
+        if (!cancelled) {
+          setSearchIndex(index);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.error(error);
+          setSearchIndexError(true);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setSearchIndexLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query, baseUrl, searchIndex]);
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -137,7 +224,9 @@ export default function HomeInteractive({ writeups, baseUrl }: Props) {
       (w) =>
         (!category || w.categories.includes(category)) &&
         (difficulty === "all" || w.difficulty === difficulty) &&
-        terms.every((term) => w.searchIndex.includes(term)),
+        terms.every((term) =>
+          (searchIndex?.[w.slug] ?? "").includes(term),
+        ),
     );
 
     return filtered.sort((a, b) => {
@@ -145,7 +234,8 @@ export default function HomeInteractive({ writeups, baseUrl }: Props) {
       if (sort === "oldest") return (a.date || "").localeCompare(b.date || "");
       return (b.date || "").localeCompare(a.date || "");
     });
-  }, [all, category, difficulty, query, sort]);
+  }, [all, category, difficulty, query, searchIndex, sort]);
+
 
   const resetFilters = () => {
     setQuery("");
@@ -259,7 +349,15 @@ export default function HomeInteractive({ writeups, baseUrl }: Props) {
         </div>
       </section>
 
-      {results.length === 0 ? (
+      {query.trim() && searchIndex === null && !searchIndexError ? (
+        <p className="font-mono text-sm text-ink-soft">
+          Loading search index...
+        </p>
+      ) : searchIndexError ? (
+        <p className="font-mono text-sm text-ink-soft">
+          Failed to load search index. Try changing your search query to retry.
+        </p>
+      ) : results.length === 0 ? (
         <p className="font-mono text-sm text-ink-soft">
           {all.length === 0
             ? "No writeups yet. Drop a .md file into src/content/writeups/ to get started."

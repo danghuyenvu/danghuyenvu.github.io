@@ -1,5 +1,6 @@
 ---
 title: CCTV
+machine: CCTV
 date: 2026-04-08
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf, gobuster, sqlmap, hashcat]

@@ -1,5 +1,6 @@
 ---
 title: Principal
+machine: Principal
 date: 2026-04-21
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
@@ -66,5 +67,3 @@ This means we are signing this public key with the root principal `-n root`.
 ![](/images/Pasted%20image%2020260421102511.png)
 Now we have the public key signed by the CA, we can download both the private key and the cert to our machine and ssh as root:
 ![](/images/Pasted%20image%2020260421102907.png)
-## Summary
-## Remediation

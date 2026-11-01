@@ -1,5 +1,6 @@
 ---
 title: Silentium
+machine: Silentium
 date: 2026-04-13
 category: [HackTheBox, Linux]
 tags: [nmap,]

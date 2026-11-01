@@ -1,5 +1,6 @@
 ---
 title: Interpreter
+machine: Interpreter
 date: 2026-04-24
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf, hashcat]

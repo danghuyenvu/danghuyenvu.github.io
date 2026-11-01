@@ -1,5 +1,6 @@
 ---
 title: Facts
+machine: Facts
 date: 2026-03-21
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf, johntheripper]

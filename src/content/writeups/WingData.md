@@ -1,5 +1,6 @@
 ---
 title: WingData
+machine: WingData
 date: 2026-04-19
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf, metasploit]
@@ -91,5 +92,3 @@ I've found a PoC script for creating the malicious `.tar` file at [Github](https
 The restore backup process completed.
 ![](/images/Pasted%20image%2020260419150454.png)
 ![](/images/Pasted%20image%2020260419145514.png)
-## Summary
-## Remediation

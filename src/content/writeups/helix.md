@@ -1,5 +1,6 @@
 ---
 title: Helix
+machine: Helix
 date: 2026-05-28
 category: [HackTheBox, Linux]
 tags: [nmap, ffuf]
