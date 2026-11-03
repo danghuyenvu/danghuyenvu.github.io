@@ -13,11 +13,21 @@
     class="relative flex max-h-[calc(100vh-13rem)] flex-col overflow-y-auto text-sm [scrollbar-width:thin] [scrollbar-color:var(--color-line)_transparent]"
   >
   </nav>
+  <a
+    id="back-to-top"
+    href="#top"
+    class="mt-4 flex items-center gap-2 border-t border-line pt-3 font-mono text-xs text-ink-soft transition-colors hover:text-accent"
+    aria-label="Back to top"
+  >
+    <span aria-hidden="true">↑</span>
+    Back to top
+  </a>
 </div>
 
 <script>
   const card = document.getElementById("toc-card");
   const nav = document.getElementById("toc");
+  const backToTop = document.getElementById("back-to-top");
 
   if (card && nav) {
     const headings = Array.from(
@@ -28,6 +38,16 @@
       const levelOf = (h: HTMLElement) => Number(h.tagName[1]);
       const minLevel = Math.min(...headings.map(levelOf));
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      backToTop?.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        window.scrollTo({
+          top: 0,
+          behavior: reduceMotion.matches ? "auto" : "smooth",
+        });
+
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      });
       const scrollTo = (id: string) => {
         const el = document.getElementById(id);
         if (!el) return;

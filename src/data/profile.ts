@@ -8,7 +8,7 @@ export const profile = {
   bio: "Notes and reports from the labs and boxes I work through: methodology, findings, and what I learned.",
   links: [
     { label: "GitHub", href: "https://github.com/danghuyenvu" },
-    // { label: "Hack The Box", href: "https://app.hackthebox.com/users/<your-id>" },
+    { label: "Hack The Box", href: "https://profile.hackthebox.com/profile/019cc3d0-43da-7205-907e-8a10f3c860eb?utm_medium=copy_url" },
     // { label: "LinkedIn", href: "https://www.linkedin.com/in/<you>" },
     // { label: "Email", href: "mailto:you@example.com" },
   ],
