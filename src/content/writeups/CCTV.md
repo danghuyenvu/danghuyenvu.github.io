@@ -10,6 +10,7 @@ os: Linux
 summary: CCTV is an easy rated box on Hack The Box
 machine_url: https://app.hackthebox.com/machines/CCTV
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/847
+pinned: true
 ---
 
 # Reconnaissance

@@ -10,7 +10,6 @@ os: Linux
 summary: Helix is a medium rated box on Hack The Box
 machine_url: https://app.hackthebox.com/machines/Helix
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/894
-pinned: true
 tldr: |
     - **Initial Access:** Exploited a Remote Code Execution (RCE) vulnerability (CVE-2023-34468) in Apache NiFi exposed via the `flow.helix.htb` vhost, allowing data exfiltration and retrieval of an SSH private key from the `support-bundles` directory to access the machine as `operator`.
     - **Reconnaissance & Enumeration:** Configured local port forwarding to access internal services, cracked a password-protected PDF document using `john` to discover maintenance window criteria, and enumerated Industrial Control Systems (ICS) OPC UA nodes (`opc.tcp`) using `uabrowse`.
