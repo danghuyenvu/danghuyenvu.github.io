@@ -57,7 +57,11 @@ function textOf(node: ReactNode): string {
 
 // Long lines wrap instead of producing a horizontal scrollbar.
 const WRAP = 'whitespace-pre-wrap [overflow-wrap:anywhere]';
-const BODY = `m-0 px-5 py-4 font-mono text-sm leading-relaxed text-prose ${WRAP}`;
+// Tall blocks scroll vertically inside the block instead of stretching the page.
+// To change the limit, edit max-h-[32rem] (1rem = 16px, one line of code is about 1.4rem).
+const SCROLL =
+  'max-h-[32rem] overflow-x-hidden overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--color-line)_transparent]';
+const BODY = `m-0 px-5 py-4 font-mono text-sm leading-relaxed text-prose ${WRAP} ${SCROLL}`;
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);

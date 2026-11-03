@@ -18,7 +18,7 @@ tldr: |
     - **Privilege Escalation:** Configured an SSH tunnel to access an internal loopback-bound Gogs service and exploited an authenticated path traversal and symbolic link vulnerability (CVE-2025-8110) to overwrite git configurations and achieve full `root` compromise.
 ---
 
-## Reconnaissance
+# Reconnaissance
 Start with a Nmap scan:
 ```bash
 sudo nmap -sVC -sS -vv -p- <IP> --min-rate 5000 -oN nmap-scan
@@ -86,6 +86,7 @@ curl -X POST http://staging.silentium.htb/api/v1/account/forgot-password \
 ```
 ![](/images/silentium/Pasted-image-20260412134401.png)
 Okay now we can use that Temp token to reset ben's password and login.
+# Getting Foothold
 Another CVE found for current Flowise version: CVE-2025-59528
 ## [CVE-2025-59528](https://github.com/FlowiseAI/Flowise/security/advisories/GHSA-3gcm-f6qx-ff7p)
 - Package: flowise (npm)
@@ -95,7 +96,7 @@ Another CVE found for current Flowise version: CVE-2025-59528
 - Attack vector: Network
 - Weaknesses: CWE-94
 So Flowise has a feature for users to input configuration settings for custom MCP servers. The input is then provided via the api endpoint `api/v1/node-load-method/customMCP` that is triggered when the custom MCP server is loaded. The input is then passed into a Function() constructor, which then evaluates and executes the input in global Node.js context, leading to RCE.
-## Exploitation
+### Exploitation
 Open Burp Suite and intercept the load customMCP request:
 ![](/images/silentium/Pasted-image-20260412210923.png)
 First we gonna test if the instance is vulnerable by modifying the data part like so:
@@ -122,7 +123,7 @@ So let's try ssh into ben account and try those found password:
 ![](/images/silentium/Pasted-image-20260413091829.png)
 And turns out the password was the same as the `SMTP_PASSWORD`(`r04D!!_R4ge`). We got lucky.
 And now we were able to retrieve the user's flag.
-## Privilege Escalation
+# Privilege Escalation
 ![](/images/silentium/Pasted-image-20260413092028.png)
 Okay `sudo -l` shows that ben cannot run sudo on this system.
 ![](/images/silentium/Pasted-image-20260413092145.png)
@@ -151,7 +152,7 @@ So I tried searching online for known CVEs affecting this version, and found CVE
 - Weaknesses: CWE-22
 So this CVE is a bypass to a previous patched CVE-2024-55947, where Gogs is vulnerable to a path traversal weakness that allows attackers to write files outside of the git repository directory. This CVE is then patched by adding an input validation on the path parameter.
 However, the fix didn't account for Symbolic Links, since Git, and both Gogs allow to use Symbolic links in repositories, and those symbolic links can point to objects outside the repo. Attacker can simply make a Symbolic link pointing to .git/config file and modify its content, especially `sshCommand` field, leading to RCE.
-## Exploitation
+### Exploitation
 First we need to create an account and a malicious repository.
 Go to account settings, craft a Personal Access Token.
 Clone the machine (In this case the link is `http://localhost:44444/...` since it's been forwarded).
@@ -190,13 +191,13 @@ The command file stores the content you want to write into the `.git/config` fil
 Open a netcat listener on the desired port (4444) and request. We got the shell. And in this case it's a root shell.
 ![](/images/silentium/Pasted-image-20260413180932.png)
 ![](/images/silentium/Pasted-image-20260413181023.png)
-## Remediation
-#### Usage of vulnerable instance of Flowise, and too verbose error message:
+# Remediation
+### Usage of vulnerable instance of Flowise, and too verbose error message:
 - Observation: Difference between the error message of an invalid user email and a valid user email (ben@silentium.htb), allowing the attacker to easily identify the account. The vulnerability in `forgot-password` API turning it into a severe account compromise, and another API vulnerability leads to RCE.
 - Remediation: Upgrade the Flowise instance to a more secure version with patched error. Fix the error message upon login failed.
-#### Credentials stored plain in environ file & password reuse
+### Credentials stored plain in environ file & password reuse
 - Observation: Some credentials (SMTP_PASSWORD) are stored in plain text inside environ files in docker containers. And the password reuse help attacker gets the initial foothold on the machine.
 - Remediation: Use better ways to store credentials if needed to (Docker secrets, ), or restricted it to privileged users.
-#### Insecure service 
+### Insecure service 
 - Observation: Usage of insecure Gogs instance leads to privilege escalation and machine compromise.
 - Remediation: Upgrade to a more secure version.

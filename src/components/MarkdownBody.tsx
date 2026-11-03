@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import rehypeHighlight from "rehype-highlight";
 import CodeBlock from "./CodeBlock";
+import rehypeSlug from "rehype-slug";
 
 type Props = {
   content: string;
@@ -27,7 +28,7 @@ export default function MarkdownBody({ content, baseUrl }: Props) {
     <div className="prose-lab">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
-        rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }]]}
+        rehypePlugins={[rehypeSlug, [rehypeHighlight, { ignoreMissing: true }]]}
         components={{
           pre: CodeBlock,
           img: ({ src, alt }) => (

@@ -94,6 +94,7 @@ Read data files from: /usr/share/nmap
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 # Nmap done at Sun May 24 09:54:06 2026 -- 1 IP address (1 host up) scanned in 929.65 seconds
 ```
+# Getting Foothold
 Exploit the React2Shell vulnerability (CVE-2025-55182) to gain the reverse shell.
 in the same directory, saw a sqlite database (check .env) `reactor.db`.
 interact:
@@ -143,6 +144,7 @@ Hardware.Mon.#05.: Temp: 56c Util: 16% Pwr:0mW
 ```
 got the creds: engineer:reactor1
 got ssh as engineer, got user flag.
+# Privilege Escalation
 ```bash
 engineer@reactor:/$ ps -U root -u root u | grep node
 root        1418  0.0  1.2 1067476 48140 ?       Ssl  02:21   0:03 /usr/bin/node --inspect=127.0.0.1:9229 /opt/uptime-monitor/worker.js

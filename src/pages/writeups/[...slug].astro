@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import MarkdownBody from "../../components/MarkdownBody";
 import TldrBody from "../../components/TldrBody";
 import AchievementCard from "../../components/AchievementCard";
+import TableOfContents from "../../components/TableOfContents.astro";
 
 export async function getStaticPaths() {
   const writeups = await getCollection("writeups");
@@ -79,6 +80,7 @@ const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <Layout title={`${w.title} | lab-writeups`}>
+  <TableOfContents slot="sidebar" />
   <article>
     <nav
       aria-label="Breadcrumb"

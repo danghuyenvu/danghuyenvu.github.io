@@ -67,11 +67,12 @@ ffuf -u http://portal.variatype.htb/FUZZ -w /usr/share/wordlists/dirbuster/direc
 > ffuf-portal-varia
 ```
 VariaType is a service to help build variable fonts.
+# Getting Foothold
 Noticed it's using `fonttools`, `fontmake`, `gftools`:
 ![](/images/Pasted%20image%2020260430224718.png)
 A brief research for known vulnerables shows CVE-2025-66034.
 ## [CVE-2025-66034](https://github.com/advisories/GHSA-768j-98cg-p3fv)
-## Exploitation
+### Exploitation
 `.designspace` payload that I uploaded to the service.
 ```xml
 <?xml version='1.0' encoding='UTF-8'?>
@@ -113,7 +114,8 @@ A brief research for known vulnerables shows CVE-2025-66034.
 ```
 Here I inject a php reverse shell into `/var/www/portal.variatype.htb/public/files/shell.php`
 And I was able to trigger the php script via: `http://portal.variatype.htb/files/shell.php`
-# Horizontal movement - getting the shell as user
+# Privilege Escalation
+## Escalating to user
 Since steve is the only user in this machine (as shown in `/home`), I first try to find a way to get a shell as steve first.
 Check for files that owned by steve but I was able to read (world readable bit set):
 ```bash
@@ -167,7 +169,7 @@ ls: cannot open directory '/var/spool/cron/crontabs': Permission denied
 ```
 So by this I think the script is fired by steve's cronjob. I gave it a try for some known vulnerabilities I found related to fontforge.
 ## [CVE-2025-15276]
-## Exploitation
+### Exploitation
 https://github.com/ahmedreda38/CVE-2025-15276-poc
 I can use the script to generate malicious sfd file and move it to `/var/www/portal.variatype.htb/public/files/` and wait for it to process the file to get the shell as steve.
 ```bash
@@ -181,6 +183,7 @@ whoami
 steve
 ```
 And I've got the shell as steve
+## Escalating to root
 Check `sudo -l`:
 ```bash
 steve@variatype:~/bin$ sudo -l

@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/Cap
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/351
 ---
 
-## Reconnaissance
+# Reconnaissance
 Running a default Nmap scan:
 ```
 nmap -sV -vv IP
@@ -67,7 +67,7 @@ python3.8 script.py
 ```
 ![Pasted image 20260310190242](/images/Pasted%20image%2020260310190242.png)
 And I've got the root shell.
-## Summary
+# Summary
 - This machine shows how unencrypted traffic could leaks your credentials (in this case is FTP).
 - It's clearly that the user is vulnerable to password reuse that gives me the initial foothold to the machine.
 - New tool linPEAS learned, this could be my last resort for when my enumeration cannot resolve anything.

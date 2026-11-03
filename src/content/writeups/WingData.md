@@ -12,14 +12,15 @@ machine_url: https://app.hackthebox.com/machines/WingData
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/835
 ---
 
-## Reconnaissance
-### Nmap scan
+# Reconnaissance
+## Nmap scan
 Start with a nmap scans on popular ports (to fast find the target and then we gonna do nmap for every other ports in the background).
 ```bash
 nmap -sVC -vv <IP> --min-rate 500 -oN nmap-popular-ports
 ```
 ![](/images/Pasted%20image%2020260418234302.png)
 We see an Apache web server running on port 80. The address resolves to `wingdata.htb`, add this to `/etc/hosts` then we're free to explore.
+## Enumeration
 ### Vhost fuzzing
 While inspecting the web page, I also ran a vhost fuzz:
 ```bash
@@ -29,7 +30,6 @@ I got a list of many vhosts with 301 status code and one with status code 200:
 ![](/images/Pasted%20image%2020260418235215.png)
 ![](/images/Pasted%20image%2020260418235330.png)
 This is a login page of Wing FTP Server. (Version 7.4.3). I've found a CVE that affects this instance [CVE-2025-47812](https://www.sonicwall.com/blog/wing-ftp-server-remote-code-execution-cve-2025-47812).
-### Enumeration
 Perform some recursive directory fuzzing for the `wingdata.htb` host:
 ```bash
 ffuf -w SecLists/Discovery/Web-Content/common.txt -u http://wingdata.htb/FUZZ -recursion -recursion-depth 3 -fc 404-599 -v > wingdata-dirbust
@@ -42,7 +42,7 @@ ffuf -w SecLists/Discovery/Web-Content/common.txt -u http://wingdata.htb/FUZZ -r
 - Weaknesses: [CWE-158 Improper Neutralization of Null Byte or NUL Character](https://cwe.mitre.org/data/definitions/158.html)
 So the vulnerability lies in the login process (via loginok.html). The supplied username and password is then passed into a C helper function named `c_CheckUser()`. And throughout the function call process traced from that function, the check relies on a C function `strlen` to validate the username. Which means, the portion behind the NULL byte injected will be ignored during the authentication process. 
 The problem is, if the authentication succeeds, the program then create a SESSION variable (which then is written into a file) retaining the whole content of the malicious username including the part behind the NULL byte. This behavior can then be exploit to inject Lua commands and trigger via authenticated endpoints, resulting in RCE.
-## Exploitation
+### Exploitation
 It is said in the CVE documentary that Wing FTP server have a feature to allow anonymous login without valid credentials. We can try login with `username=anonymous` to confirm if anonymous access is enabled:
 ![](/images/Pasted%20image%2020260419094529.png)
 Okay looks like it is enabled on this instance. Now let's test some small payload to see if we succeed to execute commands:
@@ -58,6 +58,8 @@ Configure the options like so.
 And we got the meterpreter session.
 ![](/images/Pasted%20image%2020260419105719.png)
 ![](/images/Pasted%20image%2020260419105952.png)
+# Privilege Escalation
+## Escalating to User
 The home directory shows a user named wacky with strict to group access.
 Running `sudo -l` requires a password. No misconfigured/exploitable SUID binaries.
 When finding global read files I see some interesting files:
@@ -76,6 +78,7 @@ since I'm using mode 1410 (SHA256), the hash file should be in format `hash:salt
 ![](/images/Pasted%20image%2020260419134751.png)
 And I successfully cracked using rockyou wordlist. Let's try if we can use the same password to ssh as wacky:
 ![](/images/Pasted%20image%2020260419134925.png)
+## Escalating to root
 Ran `sudo -l` to check our sudo permissions:
 ![](/images/Pasted%20image%2020260419135109.png)
 It seems like we are able to run python3 on the `restore_backup_clients.py` as root without password. Inspecting the content of the `py` script, I see that it extracts backups files from `tar` stored in `/opt/backup_clients/backups` by using `tarfile.extractall` with specific `-filter="data"`. Checking the python3 version, I see it's `python3.12`, which means this instance still vulnerable to filter data bypass (CVE-2025-4138).
@@ -86,7 +89,7 @@ It seems like we are able to run python3 on the `restore_backup_clients.py` as r
 - Severity: 7.5/10
 This CVE is about Python's tarfile validates symlink targets using `os.path.realpath()`. But when the resolved path exceed the PATH_MAX (4096 bytes on Linux), it gives up resolving and append every remaining component as literal strings, making filter sees a valid path, resulting to a path traversal.
 The exploitation includes building a 16-level of really long directory path. The traversal part is append at the back of the chain, making `realpath()` overflows and give up on resolving. The trailing path then escape up to `/` and then move down to the target directory, allowing traversal.
-## Exploitation
+### Exploitation
 I've found a PoC script for creating the malicious `.tar` file at [Github](https://github.com/thefizzyfish/CVE-2025-4138_tarfile_filter_bypass). It basically creates a malicious `.tar` file that bypasses the filter to traverse and inject contents into a file outside. In this situation, we gonna inject our public key into root's authorized_keys in order to ssh into the machine as root later.
 ![](/images/Pasted%20image%2020260419150632.png)
 The restore backup process completed.

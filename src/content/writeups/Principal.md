@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/Principal
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/853
 ---
 
-## Reconnaissance
+# Reconnaissance
 Start with an Nmap scan:
 ```bash
 nmap -sVC -vv -p- IP -T4 -oN nmap-scan
@@ -28,7 +28,7 @@ A proxy server running an instance of pac4j-jwt/6.0.3, which is vulnerable to CV
 - Severity: 10/10 (Critical)
 - Weaknesses: CWE-347: Improper Verification of Cryptographic Signature
 Function `toSignedJWT()` is used to extract the Json Web Signature from the decrypted JWE. However, if the extracted token is in plain JWT with alg: none, the function returns NULL, which skips all the trailing signature verification. An attacker can abuse this to bypass the signature verification and access authenticated resource with forged JWE.
-## Exploitation
+### Exploitation
 `http://10.129.26.214:8080/api/auth/jwks` to retrieve the server's public key.
 Download the PoC for CVE-2026-29000 and use the public jwks endpoint to generate a malicious Bearer token.
 The endpoint `static/js/app.js` reveals the schema of the inner JWT:
@@ -42,7 +42,7 @@ We were able to get into the dashboard page.
 Found an Encryption Key under Security tab in Settings:
 ![](/images/Pasted%20image%2020260421092901.png)
 Try this password to SSH as every user listed in, we were able to ssh as `svc-deploy`.
-## Privilege Escalation
+# Privilege Escalation
 First tryna list some of the SUID binaries, maybe we are able to exploit that
 ![](/images/Pasted%20image%2020260421093212.png)
 ![](/images/Pasted%20image%2020260421093237.png)

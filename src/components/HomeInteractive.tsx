@@ -247,10 +247,11 @@ export default function HomeInteractive({ writeups, baseUrl }: Props) {
     <div>
       <div className="mb-10">
         <h1 className="mb-2 text-2xl font-semibold">Lab Writeups</h1>
-        <p className="max-w-[60ch] text-ink-soft">
+        {/* Preserving for an introduction block */}
+        {/* <p className="max-w-[60ch] text-ink-soft">
           Notes and reports (or maybe drafts) from labs and exercises —
           methodology, findings, and what I learned working through each one.
-        </p>
+        </p> */}
       </div>
 
       {pinned.length > 0 && !isFiltering && (

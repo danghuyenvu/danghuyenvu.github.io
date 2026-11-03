@@ -17,7 +17,7 @@ tldr: |
     - **Privilege Escalation:** Modified PLC/SCADA states over the OPC UA protocol (switching control mode to `maintenance`, enabling `TestOverride`, and adjusting calibration offsets) to trigger the maintenance window, enabling the execution of a `sudo` binary to achieve full root privileges.
 ---
 
-# Recon
+# Reconnaissance
 ---
 Start with a full TCP scan:
 ```bash
@@ -49,9 +49,10 @@ Service detection performed. Please report any incorrect results at https://nmap
 - 22/TCP: OpenSSH 8.9p1
 - 80/TCP: nginx 1.18.0
 A vhost enumeration reveals `flow.helix.htb`.
+# Getting Foothold
 CVE-2023-34468
 found operator's private key in support-bundles directory -> ssh as operator
-sudo -l shows operator is allowed to run a binary as root (NOPASSWD)
+# Privilege Escalation
 ss -tuln shows multiple services listening on loopback
 The service on port 4840 is speaking opc.tcp
 The service on port 8081 is Reactor HMI

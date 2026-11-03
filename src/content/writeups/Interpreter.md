@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/Interpreter
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/841
 ---
 
-## Reconnaissance
+# Reconnaissance
 Start with an Nmap scan:
 ```bash
 nmap -sVC -vv -p- <IP> -T4 -oN nmap-full
@@ -23,14 +23,15 @@ The webpage on port 80 requires to be accessed over HTTPS, so we move to 443.
 It's an instance of Mirth Connect.
 ![](/images/Pasted%20image%2020260424100713.png)
 Inside the downloaded `webstart.jnlp` file I found the current version of Mirth Connect is 4.4.0. Searching shows that this version is vulnerable to CVE-2023-43208.
-## CVE-2023-43208
-## Exploitation
+# Getting Foothold
 Download the PoC at [GitHub](https://github.com/vedant-joshi-og/CVE-2023-43208-EXPLOIT), run it and we got the reverse shell as mirth.
 ![](/images/Pasted%20image%2020260423210806.png)
 We can upgrade our shell to tty shell using
 ```bash
 python3 -c "import pty; pty.spawn('/bin/bash')"
 ```
+# Privilege Escalation
+## Escalating to user
 It looks like I got dropped in mirth application directory, maybe I might find some configuration files around. So I got in `conf` directory and see `mirth.properties`.
 `mirth.properties` is the configuration for mirth connection. Found the user credentials for mariadb.
 I then tried authenticate by 
@@ -47,12 +48,12 @@ From the given salt, digest and hash type I ran hashcat to crack the password of
 ![](/images/Pasted%20image%2020260424002330.png)
 The cracked password is `snowflake1`. Then tried use that to ssh into the machine as sedric.
 ![](/images/Pasted%20image%2020260424002508.png)
-## Privilege Escalation
+## Escalating to root
 - `sudo -l` not working cause sudo not installed.
 - No misconfigured SUID binaries.
 - Checking files owned by `sedric` user or `sedric` group, I found `/usr/local/bin/notif.py` which is owned by root but allows read permission for sedric group. It's running a service to add patients for the mirth connection but only accepts requests from localhost on port 54321.
 ![](/images/Pasted%20image%2020260424083902.png)
-Running `ss -tuln` I saw that there is indeed a service listening at `127.0.0.1:54321`. So I crafted an ssh tunnel to forward the traffic from that to access from my machine
+Running `ss -tuln` I saw that there is a service listening at `127.0.0.1:54321`. So I crafted an ssh tunnel to forward the traffic from that to access from my machine
 ```bash
 ssh -L 8080:localhost:54321 sedric@<IP>
 ```

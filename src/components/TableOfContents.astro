@@ -1,0 +1,117 @@
+---
+// Sidebar card for writeup pages: "On this page".
+// It is filled in the browser from the headings of the rendered article (h1-h3), so it always
+// matches the page, and the entry for the section you are reading is highlighted as you scroll.
+// It stays hidden when the writeup has fewer than two headings.
+---
+
+<div id="toc-card" hidden class="rounded-xl border border-line bg-surface p-5">
+  <h2 class="mb-3 font-mono text-[11px] uppercase tracking-widest text-ink-soft">On this page</h2>
+  <nav
+    id="toc"
+    aria-label="Table of contents"
+    class="relative flex max-h-[calc(100vh-13rem)] flex-col overflow-y-auto text-sm [scrollbar-width:thin] [scrollbar-color:var(--color-line)_transparent]"
+  >
+  </nav>
+</div>
+
+<script>
+  const card = document.getElementById("toc-card");
+  const nav = document.getElementById("toc");
+
+  if (card && nav) {
+    const headings = Array.from(
+      document.querySelectorAll<HTMLElement>(".prose-lab :is(h1, h2, h3)[id]"),
+    );
+
+    if (headings.length >= 2) {
+      const levelOf = (h: HTMLElement) => Number(h.tagName[1]);
+      const minLevel = Math.min(...headings.map(levelOf));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const scrollTo = (id: string) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+        history.replaceState(null, "", `#${id}`);
+      };
+
+      const links = headings.map((h) => {
+        h.style.scrollMarginTop = "1.5rem";
+        const a = document.createElement("a");
+        a.href = `#${h.id}`;
+        a.textContent = (h.textContent ?? "").trim();
+        a.dataset.id = h.id;
+        a.style.paddingLeft = `${0.75 + (levelOf(h) - minLevel) * 0.75}rem`;
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollTo(h.id);
+          setActive(h.id);
+        });
+        nav.appendChild(a);
+        return a;
+      });
+
+      function setActive(id: string) {
+        for (const a of links) {
+          if (a.dataset.id === id) {
+            a.dataset.active = "true";
+            a.setAttribute("aria-current", "location");
+            // keep the active entry visible inside the TOC (without scrolling the page)
+            const top = a.offsetTop;
+            if (top < nav!.scrollTop || top + a.offsetHeight > nav!.scrollTop + nav!.clientHeight) {
+              nav!.scrollTop = top - nav!.clientHeight / 2;
+            }
+          } else {
+            delete a.dataset.active;
+            a.removeAttribute("aria-current");
+          }
+        }
+      }
+
+      // Scroll spy: the active section is the last heading that has reached the top of the viewport.
+      const OFFSET = 140;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        let current = headings[0];
+        for (const h of headings) {
+          if (h.getBoundingClientRect().top - OFFSET <= 0) current = h;
+          else break;
+        }
+        const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+        if (atBottom) current = headings[headings.length - 1];
+        setActive(current.id);
+      };
+      const onScroll = () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      update();
+
+      card.hidden = false;
+    }
+  }
+</script>
+
+<style is:global>
+  #toc a {
+    display: block;
+    border-left: 2px solid var(--color-line);
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    color: var(--color-ink-soft);
+    line-height: 1.35;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  #toc a:hover {
+    color: var(--color-ink);
+  }
+  #toc a[data-active="true"] {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+  }
+</style>

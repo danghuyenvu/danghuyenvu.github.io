@@ -17,7 +17,7 @@ tldr: |
     - **Privilege Escalation:** Leveraged a local privilege escalation flaw in snap-confine and systemd-tmpfiles (CVE-2026-3888) by winning a race condition in the sandbox mimic namespace, allowing the overwriting of the dynamic linker to execute a root shell and bypass AppArmor confinement.
 ---
 
-## Reconnaissance
+# Reconnaissance
 Nmap scan:
 ```bash
 nmap -sVC -vv -p- <IP> -T4 -oN nmap-full
@@ -35,7 +35,7 @@ This is running a Nginx UI instance and I saw it's open source, so I can take a 
 ## [CVE-2026-27944](https://github.com/0xJacky/nginx-ui/security/advisories/GHSA-g9w5-qffc-6762)
 So this vulnerability is affecting Nginx UI version <= 2.3.2, and fixed in 2.3.3.
 Where the API endpoint `/api/backup` is open in public without authentication checks, allowing everyone to download full system backup containing sensitive user's data. Although these data is encrypted in AES-256-CBC, the key and IV is returned in the response's `X-Backup-Security` header.
-## Exploitation
+### Exploitation
 We curl with `-v` to also dump the response header for the key
 ```bash
 curl -v http://admin.snapped.htb/api/backup --output backup.zip
@@ -70,7 +70,7 @@ hashcat hashes.txt /usr/share/wordlists/rockyou.txt -m 3200
 We cracked the password of `jonathan`, the other admin's password we gonna leave it there.
 Try ssh as jonathan:
 ![](/images/Pasted%20image%2020260426094932.png)
-## Privilege Escalation
+# Privilege Escalation
 ```bash
 sudo -l
 ```

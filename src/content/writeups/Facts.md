@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/Facts
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/829
 ---
 
-## Enumeration
+# Reconnaissance
 Nmap SYN scan:
 ```bash
 nmap -sVC -vv -p- --min-rate 5000 -oN facts-nmap <IP>
@@ -59,8 +59,9 @@ aws s3 cp s3://internal/.ssh/id_ed25519 ./ssh_key --endpoint-url http://10.129.2
 As it is shown above this private key has been encrypted by some passphrase, so we gonna need to crack it.
 ## Password crack
 So first converting the encrypted file to a hash format using ssh2john.py, then crack it with john the ripper, the password is `dragonballz`. But I don't know what user to use this key for.
-So after a while searching online, I ended up with a hint to [CVE-2024-46987](https://github.com/Goultarde/CVE-2024-46987)which is another vulnerability of Camaelon CMS that does affect version 2.9. 
-## CVE-2024-46987
+# Getting Foothold
+So after a while searching online, I ended up with CVE-2024-46987 which is another vulnerability of Camaelon CMS that also affects version 2.9. 
+## [CVE-2024-46987](https://github.com/Goultarde/CVE-2024-46987)
 Okay so basically this CVE shows that the app with this vulnerability will allow authorized users to download arbitrary files from the server by manipulating the `file` parameter of the downloading API:
 ```url
 http://facts.htb/admin/media/download_private_file?file=../../../../../../etc/passwd
@@ -74,6 +75,7 @@ ssh -i ssh_key trivia@facts.htb
 ```
 ![Pasted image 20260321093008](/images/Pasted%20image%2020260321093008.png)
 And I was able to get the user flag.
+# Privilege Escalation
 Running the command `sudo -l`
 ![Pasted image 20260321093113](/images/Pasted%20image%2020260321093113.png)
 So the user trivia is able to run the /usr/bin/facter with root privileges and without being promted for password:

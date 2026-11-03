@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/Kobold
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/856
 ---
 
-## Reconnaissance
+# Reconnaissance
 Starting out with a nmap SYN scan:
 ```bash
 sudo nmap -sVCS -vv -p- --min-rate 5000 -oN nmap-scan <IP>
@@ -42,6 +42,7 @@ Moving on to the next `https://mcp.kobold.htb`:
 It's running an MCPJam instance, which is said to be the Postman for MCP servers.
 ![Pasted image 20260404222453](/images/Pasted%20image%2020260404222453.png)
 Tried Sign in and Create Account but bumped into invalid URI. However, the Settings tab shows that the version of the current instance of MCPJam is 1.4.2, which leads to a CVE Id of CVE-2026-23744. 
+# Getting Foothold
 ## [CVE-2026-23744](https://github.com/MCPJam/inspector/security/advisories/GHSA-232v-j27c-5pp6)
 - Packet: MCPJam/Inspector (npm).
 - Affected version: 1.4.2 and earlier.
@@ -67,10 +68,10 @@ Simple commands to search for user flag:
 ```bash
 find / -type f -name user.txt 2>/dev/null
 ```
-## Priviledge Escalation
+# Privilege Escalation
 I suppose I should find a way to escalate to a more persistent connection like ssh.
 `sudo -l` showing nothing useful.
-So got one hint is to continue checking out those remaining vhost and services. So now we continue with `https://bin.kobold.htb`:
+Now we continue with `https://bin.kobold.htb`:
 ![Pasted image 20260406181729](/images/Pasted%20image%2020260406181729.png)
 It's running a PrivateBin instance with version 2.0.2. This version is vulnerable to CVE-2025-64714.
 ## [CVE-2025-64714](https://github.com/advisories/GHSA-g2j9-g8r5-rg82)
@@ -155,7 +156,7 @@ I was able to find those php files they are now in `/srv/data`
 ![Pasted image 20260407155459](/images/Pasted%20image%2020260407155459.png)
 ![Pasted image 20260407155627](/images/Pasted%20image%2020260407155627.png)
 This `.dockerenv` saying that I'm currently inside a docker environment.
-Okay I've got a hint where I can run docker commands via 
+I can run docker commands via 
 ```bash
 sg docker -c <commands>
 ```
@@ -166,6 +167,6 @@ That `privatebin/nginx-fpm-alpine` looks like the one instance running on `bin.k
 sg docker -c 'docker run -u root -v /:/rootfs --rm --entrypoint cat privatebin/nginx-fpm-alpine:2.0.2 /rootfs/root/root.txt'
 ```
 ![Pasted image 20260407174126](/images/Pasted%20image%2020260407174126.png)
-## Conclusion
+# Conclusion
 - This machine really heavy on enumeration skill, also the privilege escalation part is really tricky.
 - New privilege escalation technique using misconfigured permission in `cg` and initial mounting process of Docker.

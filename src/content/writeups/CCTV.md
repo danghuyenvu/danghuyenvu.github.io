@@ -12,21 +12,17 @@ machine_url: https://app.hackthebox.com/machines/CCTV
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/847
 ---
 
-## Reconnaissance
-#### Nmap scan:
+# Reconnaissance
+## Nmap scan
 ```bash
 nmap -sVC -vv -p- IP --min-rate 5000 -oN nmap-scan
 ```
 ![Pasted image 20260408085529](/images/Pasted%20image%2020260408085529.png)
-#### Directory enumeration
+## Web enumeration
 ```bash
 gobuster dir -u http://cctv.htb/ -w SecLists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt -t 50
 ```
 ![Pasted image 20260310090737](/images/Pasted%20image%2020260310090737.png)
-#### Vhost fuzzing
-```bash
-ffuf -u http://cctv.htb/ -H "HOST:FUZZ.cctv.htb" -mc 200,301,302 -w SecLists/Discovery/DNS/bitquark-subdomains-top100000.txt
-```
 So nmap scan reveals a web service running on port 80, typing `IP:80` in to the browser resolve to a domain `cctv.htb`. Add IP and domain pair into `/etc/hosts`, we are able to land on the web page.
 ![Pasted image 20260407205318](/images/Pasted%20image%2020260407205318.png)
 I noticed a Staff Login button on the top right, it then directs into a ZoneMinder login page at `/zm/`:
@@ -34,6 +30,7 @@ I noticed a Staff Login button on the top right, it then directs into a ZoneMind
 There is no clear clues so far, so I tried fuzzing some common username and password. Surprisingly, the pair `admin:admin` was success and then lead me to a console view:
 ![Pasted image 20260407205621](/images/Pasted%20image%2020260407205621.png)
 Before I could happen to investigate anything specific, the version `1.37.63` suggests I should try for some known CVEs that happen to affect this current ZoneMinder instance.
+# Getting Foothold
 ## [CVE-2024-51482](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-qm8h-3xvf-m7j3)
 - Package: zoneminder (apt, ppa, aur)
 - Affected version: 1.37.* <= 1.37.64
@@ -82,6 +79,7 @@ Okay, got the foothold so finding the user flag should be relatively easy.
 Interesting, I cannot find any `user.txt` file. 
 ![Pasted image 20260408133419](/images/Pasted%20image%2020260408133419.png)
 Also the user `mark` cannot run sudo.
+# Privilege Escalation
 Even when I have a foothold onto the machine I still cannot reach the user's flag. One thing I noticed is that in `/home` there is another user named `sa_mark`, where I suspect the user flag to lies in. 
 Before trying to find creds on other user, I think I might need to try if I can escalate my privilege from mark.
 First, try to find any exploitable binaries with SUID:
@@ -122,7 +120,7 @@ So the version of this motioneye instance is 0.43.1b4, which suggests it is vuln
 - Weaknesses: CWE-20, CWE-78, CWE-116
 So the CVE is about MotionEye accepting arbitrary fields such as `image_file_name` and `movie_name` in the web UI. These fields are then written directly into `/etc/motioneye/camera-*.conf` without proper sanitization. "When MotionEye restarts the service, the Motion binary reads this configuration. Because Motion treats these fields as shell-expandable, injected characters (e.g. $(), backticks) are interpreted as shell commands."
 Which means by appending proper shell command inside `$()`, we can force the server to execute arbitrary commands via restarting the Motion service.
-## Exploit
+### Exploitation
 So the step by step to reproduce the PoC of the CVE including:
 - Bypassing the client-side validation, by overriding `configUiValid` function using browser's developer console.
 - Go to **Camera Settings -> Still Images**, change `Set Capture Mode` to `Interval Snapshots` and change the number of `Snapshot Interval` to 10.
@@ -138,7 +136,7 @@ Interestingly, this time we got the root shell! Which means the current Motion s
 ![Pasted image 20260408201417](/images/Pasted%20image%2020260408201417.png)
 As expected, the user flag was stored inside `sa_mark`'s home directory.
 ![Pasted image 20260408201528](/images/Pasted%20image%2020260408201528.png)
-## Summary
+# Summary
 This machine is kinda interesting beside the fact that it doesn't give away the user flag as soon as I got the initial foothold.
 Techniques used in this machine including:
 - Default credentials fuzzing.

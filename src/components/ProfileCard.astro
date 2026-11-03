@@ -1,0 +1,46 @@
+---
+import { profile } from "../data/profile";
+---
+
+<div class="rounded-xl border border-line bg-surface p-5">
+  <div class="flex items-center gap-3">
+    {
+      profile.avatar && (
+        <img
+          src={profile.avatar}
+          alt=""
+          width="48"
+          height="48"
+          class="h-12 w-12 shrink-0 rounded-full border border-line"
+          onerror="this.remove()"
+        />
+      )
+    }
+    <div class="min-w-0">
+      <p class="truncate font-semibold text-ink">{profile.name}</p>
+      {profile.role && <p class="truncate font-mono text-[11px] text-ink-soft">{profile.role}</p>}
+    </div>
+  </div>
+
+  {profile.bio && <p class="mt-4 text-sm leading-relaxed text-ink-soft">{profile.bio}</p>}
+
+  {
+    profile.links.length > 0 && (
+      <ul class="mt-4 flex flex-col gap-0.5 border-t border-line pt-3 font-mono text-xs">
+        {profile.links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noreferrer noopener" : undefined}
+              class="group flex items-center justify-between rounded-md px-2 py-1.5 text-ink-soft transition-colors hover:bg-surface-hover hover:text-ink"
+            >
+              <span>{link.label}</span>
+              <span class="transition-colors group-hover:text-accent">↗</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>

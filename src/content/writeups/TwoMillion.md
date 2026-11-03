@@ -12,7 +12,7 @@ machine_url: https://app.hackthebox.com/machines/TwoMillion
 achievement: https://labs.hackthebox.com/achievement/machine/1737280/547
 ---
 
-## Reconnaissance
+# Reconnaissance
 Start with a nmap scan:
 ```bash
 sudo nmap -sVC -vv -p- --min-rate 5000 -oN twomillion-nmap <IP>
@@ -96,6 +96,7 @@ So this likely is the credentials for database connection in the backend.
 Dumping the `/etc/passwd` There is indeed a user named `admin`. So maybe we can use these creds to ssh into the machine with this username?
 ![Pasted image 20260324095742](/images/Pasted%20image%2020260324095742.png)
 ![Pasted image 20260324095915](/images/Pasted%20image%2020260324095915.png)
+# Privilege Escalation
 The next steps to get the root is by exploiting the CVE in OverlayFS (CVE-2023-0386)
 ## CVE-2023-0386
 OverlayFS is a feature to map upper, lower file system into one unified mounting point.
